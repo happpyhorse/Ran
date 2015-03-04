@@ -1,2 +1,2 @@
-#cpcs 304 project
+#cpsc 304 project
 ran's project
