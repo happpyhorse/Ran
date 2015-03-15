@@ -1,0 +1,94 @@
+{% extends "t_signin.html" %}
+
+{% block wrapper_rightbar_box2 %}{% end %}
+
+{% block wrapper_main_box1 %}
+    <div class="box">
+        <div class="cell">
+            <form id="myForm" class="form-horizontal" action="/signup" data-toggle="validator" role="form" method="post">
+                <div class="form-group" style="max-height: 34px;">
+                    <label class="col-sm-4 control-label for" for="">Email</label>
+                    <div class="col-sm-5"><input id="ck_email_2" name="email" class="form-control" type="email" placeholder="example@xxx.com" required></div>
+                    <label class="col-sm-2 control-label for" id="ck_email_3"></label>
+                </div>
+                <div class="form-group" style="max-height: 34px;">
+                    <label class="col-sm-4 control-label for" for="">Account</label>
+                    <div class="col-sm-5"><input name="account" class="form-control" type="text" placeholder="Your Account"></div>
+                </div>
+                <div class="form-group" style="max-height: 34px;">
+                    <label class="col-sm-4 control-label for" for="">Password</label>
+                    <div class="col-sm-5"><input name="pwd1" id="pwd1" class="form-control" type="password" data-minlength="6" placeholder="More than 6 Character" required></div>
+                </div>
+                <div class="form-group" style="max-height: 34px;">
+                    <label class="col-sm-4 control-label for" for="">Password Confirm</label>
+                    <div class="col-sm-5"><input name="pwd2" id="pwd2" class="form-control" type="password" data-match="#pwd1" data-match-error="don't match" placeholder="Same as before" required></div>
+                </div>
+                <div class="form-group" style="max-height: 34px;">
+                    <label class="col-sm-4 control-label for" for="">Real Name</label>
+                    <div class="col-sm-5"><input name="name" class="form-control" type="text" placeholder="Your Real Name"></div>
+                </div>
+                <div class="form-group" style="max-height: 34px;">
+                    <div class="col-sm-offset-4 col-sm-5"><button class="btn btn-success" type="submit">Sign Up</button></div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% end %}
+
+{% block wrapper_main_box2 %}
+    <div class="box">
+        <div class="cell">
+            <div class="fr">
+                <a href="/">See all the theme</a>
+            </div>
+            <span class="hfade">
+                <strong>Ran</strong>
+                " / Theme Navigation"
+            </span>
+        </div>
+        <div class="cell">
+            <table cellpadding="5" cellspacing="0" border="0" width="100%">
+                <tbody>
+                    <tr>
+                        <td align="right" width="60">
+                            <span class="hfade">All</span>
+                        </td>
+                        <td style="line-height: 200%; padding-left: 10px;">
+                            {% for section in sections %}
+                            <a href="/" style="font-size: 14px;">{{section}}</a>
+                            {% end %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="inner"></div>
+    </div>
+{% end %}
+
+{% block wrapper_main_box3 %}{% end %}
+{% block script %}
+<script>
+$(function() {
+        checkMail();
+        checkAccount();
+        });
+function checkMail(){
+    $("#ck_email_2").blur(function(){
+            var mail=$(this).val();
+            var url="/db?action=ck_mail&param="+mail;
+            $.get(url, function(res){
+                if(res=="T"){
+                $("#ck_email_3").html('you can use it')
+                }
+                else{
+                $("#ck_email_3").html('already exist')
+                }
+            })
+    })
+}
+</script>
+<script>
+$('#myForm').validator()
+</script>
+{% end %}

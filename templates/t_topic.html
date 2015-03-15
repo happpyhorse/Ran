@@ -1,0 +1,58 @@
+{% extends "t_home.html" %}
+
+{% block wrapper_main_box1 %}
+    <div class="box" style="border-bottom: 0px;">
+        <div class="header">
+            <div class="fr"><a href="/"><img class="avatar" src="{{ static_url(post["icon"]) }}" alt="" border="0" align="default" style="max-width: 96px; max-height: 96px;"></a></div>
+            <a href="/">{{ post["account"] }}</a>
+            <span class="chevron">&nbsp;›&nbsp;</span>
+            <a href="/">{{ post["section"]}}</a>
+            <div class="sep10"></div>
+            <h1>{{ post["title"] }}</h1>
+            <small class="gray"><a href="/">{{ post["account"] }}</a> {{ post["time"] }} &nbsp; </small>
+        </div>
+        <div class="cell">
+            <div class="topic_content">
+                {{ post["content"] }}
+            </div>
+        </div>
+        <div class="topic_buttons">
+            <div class="fr gray f11" style="line-height: 12px; padding-top: 3px; text-shadow: 0px 1px 0px #fff;">129 次点击 &nbsp;</div>
+            <a href="/" class="tb">collect</a>
+        </div>
+    </div>
+{% end %}
+
+{% block wrapper_main_box2 %}
+    <div class="box">
+        {% for reply in replys %}
+            {% module Reply(reply) %}
+        {% end %}
+    </div>
+{% end %}
+
+{% block wrapper_main_box3 %}
+    {% if user %}
+    <div class="box">
+        <div class="cell">
+            <div class="fr">
+                <a href=""><strong>^</strong></a>
+            </div>
+            <div>reply</div>
+        </div>
+        <div class="cell">
+            <form action="/topic?section={{ post['section'] }}&tPid={{ post['pid'] }}" method="post">
+                <textarea id="reply_content" name="content" maxlength="10000" class="mll" style="overflow: hidden; word-wrap: break-word; resize: horizontal; height: 112px;"></textarea>
+                <div class="sep10"></div>
+                <div class="fr">
+                    <div class="sep5"></div>
+                    <span class="gray">Try make you reply more helpful to other people</span>
+                </div>
+                <input type="submit" value="reply" class="super normal button">
+            </form>
+        </div>
+        <div class="inner"></div>
+    </div>
+    {% else %}
+    {% end %}
+{% end %}

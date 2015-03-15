@@ -1,0 +1,133 @@
+{% extends "t_home.html" %}
+
+{% block wrapper_main_box1 %}
+    <div class="box">
+        <div class="header">
+            <a href="">Ran</a>
+            <span class="chevron">&nbsp;›&nbsp;</span>
+            Config
+        </div>
+        {% if warning %}
+        <div class="cell">
+            {{ warning }}
+        </div>
+        {% else %}
+        {% end %}
+        <div class="inner">
+            <form class="form-horizontal" action="/config?action=info" method=post>
+                <div class="form-group" style="max-height: 34px;">
+                    <label class="col-sm-4 control-label for" for="">Email</label>
+                    <label class="col-sm-4 control-label for" for="" style="text-align: left;">{{ user['mail'] }}</label>
+                </div>
+                <div class="form-group" style="max-height: 34px;">
+                    <label class="col-sm-4 control-label for" for="">Account</label>
+                    <div class="col-sm-5"><input name="account" class="form-control" type="text" placeholder="your account" required></div>
+                </div>
+                <div class="form-group" style="max-height: 34px;">
+                    <label class="col-sm-4 control-label for" for="">Address</label>
+                    <div class="col-sm-5"><input name="address" class="form-control" type="text" placeholder="your address" required></div>
+                </div>
+                <div class="form-group" style="max-height: 34px;">
+                    <div class="col-sm-offset-4 col-sm-5"><button class="btn btn-default" type="submit">Save Change</button></div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% end %}
+
+{% block wrapper_main_box2 %}
+    <div class="box">
+        <div class="cell">
+            User Img Upload
+        </div>
+        <div class="cell">
+            <table cellpadding="5" cellspacing="0" border="0" width="100%" style="border-spacing: 2px;">
+                <tbody>
+                    <tr>
+                        <td width="120" align="right">Current Img</td>
+                        <td width="auto" align="left">
+                            &nbsp;&nbsp;&nbsp;
+                            <img src="{{ static_url(user['icon']) }}" class="avatar" border="0" align="default" style="max-width:48px; max-height: 48px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="sep20"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" align="right"></td>
+                        <td width="auto" align="lenft">
+                            <form action="/config?action=icon" method="post" enctype="multipart/form-data">
+                                <input name="icon" type="file" required>
+                                <div class="sep20"></div>
+                                <button class="btn btn-info" type="submit">upload</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="inner">
+            The rule of image
+            <ul>
+                <li>sensitive image is forbidden in this forum</li>
+                <li>If you are a male, please don't use female image as your Icon</li>
+            </ul>
+        </div>
+    </div>
+{% end %}
+
+{% block wrapper_main_box3 %}
+    <div class="box">
+        <div class="cell">
+            <div class="fr"><span class="hfade">If you don't want change your password, you need not write below</span></div>
+            Update Password
+        </div>
+        <div class="inner">
+            <form id="myForm" class="form-horizontal" action="/config?action=pwd" method="post">
+                <div class="form-group" style="max-height: 34px;">
+                    <label class="col-sm-4 control-label for" for="">Old Password</label>
+                    <div class="col-sm-5"><input id="oldPwd2" name="old" class="form-control" type="password" required placeholder="Old password"></div>
+                    <label class="col-sm-2 control-label for" id="oldPwd3"></label>
+                </div>
+                <div class="form-group" style="max-height: 34px;">
+                    <label class="col-sm-4 control-label for" for="">New Password</label>
+                    <div class="col-sm-5"><input id="pwd1" name="new" class="form-control" type="password" data-minlength="6" placeholder="More than 6 Character" required></div>
+                </div>
+                <div class="form-group" style="max-height: 34px;">
+                    <label class="col-sm-4 control-label for" for="">Confirm New Password</label>
+                    <div class="col-sm-5"><input class="form-control" type="password" data-match="#pwd1" data-match-error="don't match" placeholder="Sme as above" required></div>
+                </div>
+                <div class="form-group" style="max-height: 34px;">
+                    <div class="col-sm-offset-4 col-sm-5"><button class="btn btn-info" type="submit">Update Password</button></div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% end %}
+
+{% block script %}
+<script>
+$(function() {
+        checkPwd();
+        });
+function checkPwd(){
+    $("#oldPwd2").blur(function(){
+            var pwd=$(this).val();
+            var url="/db?action=ck_pwd&param="+pwd;
+            $.get(url, function(res){
+                if(res=="T"){
+                $("#oldPwd3").html('right')
+                }
+                else{
+                $("#oldPwd3").html('wrong')
+                }
+            })
+    })
+}
+</script>
+<script>
+$('#myForm').validator()
+</script>
+{% end %}

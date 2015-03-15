@@ -1,0 +1,27 @@
+<div class="cell item" style="border-top-left-radius: 3px; border-top-right-radius: 3px;">
+    <div class="sep10"></div>
+    <table cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tbody>
+            <tr>
+                <td width="48" valign="top" align="center">
+                    <a href="/"><img src="{{ static_url(post["icon"]) }}" class="avatar" border="0" align="default" width="32"></a>
+                </td>
+                <td width="10"></td>
+                <td width="auto" valign="middle">
+                    <span class="item_title"><a href="/topic?pid={{ post["pid"] }}&icon={{ post["icon"] }}&account={{ post["user"] }}&time={{ post["time"] }}&content={{ post["content"] }}&title={{ post["title"] }}&section={{ post["section"] }}">{{ post["title"] }}</a></span>
+                    <div class="sep5"></div>
+                    <span class="small hfade">
+                        <a class="node" href="">{{ post["section"] }}</a>
+                         " &nbsp;•&nbsp; "
+                        <strong><a href="">{{ post["user"] }}</a></strong>
+                        " &nbsp;•&nbsp; {{ post["time"] }} &nbsp;•&nbsp; 最后回复来自
+                        <strong><a href="">{{ post["lastRe"] }}</a></strong>
+                    </span>
+                </td>
+                <td width="50" align="right" valign="middle">
+                    <a class="count_livid" href="/">{{ post["reNum"] }}</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
