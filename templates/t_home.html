@@ -1,0 +1,200 @@
+{% extends "home.html" %}
+
+{% block top_3 %}
+    {% if user %}
+    <td width="570" align="right" style="padding-top: 2px;">
+        <a href="/home" class="top">Home</a>
+        &nbsp;&nbsp;&nbsp;
+        <a href="" class="top">{{user['account']}}</a>
+        &nbsp;&nbsp;&nbsp;
+        <a href="/config" class="top">Config</a>
+        &nbsp;&nbsp;&nbsp;
+        <a href="/signin?action=logout" class="top">Log Out</a>
+    </td>
+    {% else %}
+    <td width="570" align="right" style="padding-top: 2px;">
+        <a href="/home" class="top">Home</a>
+        &nbsp;&nbsp;&nbsp;
+        <a href="/signup" class="top">Sign Up</a>
+        &nbsp;&nbsp;&nbsp;
+        <a href="/signin" class="top">Sign In</a>
+    </td>
+    {% end %}
+{% end %}
+
+{% block wrapper_rightbar_box1 %}
+    {% if user %}
+    <div class="box">
+        <div class="cell">
+            <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tbody>
+                    <tr>
+                        <td width="48" valign="top">
+                            <a href="/">
+                                <img src="{{ static_url(user['icon']) }}" class="avator" border="0" align="default" style="max-width: 48px; max-height: 48px;">
+                            </a>
+                        </td>
+                        <td width="10" valign="top"></td>
+                        <td width="auto" align="left">
+                            <span class="bigger"><a href="/">{{ user['account'] }}</a></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="sep10"></div>
+            <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tbody>
+                    <tr>
+                        <td width="33%" align="center">
+                            <a href="/" class="dark" style="display: block;">
+                                <span class="bigger">{{ user['pNum'] }}</span>
+                                <div class="sep3"></div>
+                                <span class="bigger">Post</span>
+                            </a>
+                        </td>
+                        <td width="34%" style="border-left: 1px solid rgba(100, 100, 100, 0.4); border-right: 1px solid rgba(100, 100, 100, 0.4);" align="center">
+                            <a href="/">
+                                <span class="bigger">{{ user['rNum'] }}</span>
+                                <div class="sep3"></div>
+                                <span class="bigger">Reply</span>
+                            </a>
+                        </td>
+                        <td width="33%" align="center">
+                            <a href="/">
+                                <span class="bigger">{{ user['fNum'] }}</span>
+                                <div class="sep3"></div>
+                                <span class="bigger">Friends</span>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="cell" style="padding: 5px;">
+            <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tbody>
+                    <tr>
+                        <td width="32">
+                            <a href="/"><img src="{{ static_url('pic/new.png') }}" alt="" width="32" border="0"></a>
+                        </td>
+                        <td width="10"></td>
+                        <td width="auto" valign="middle" align="left">
+                            <a href="/">Submit a new post</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="cell">
+            <a href="/">x unread message</a>
+        </div>
+        <div class="inner">
+            <div float="right" text-align="right"><a href="/">balance: {{ user['balance'] }}</a></div>
+        </div>
+    </div>
+    {% else %}
+    <div class="box">
+        <div class="cell">
+            <strong>Ran - cpsc 304 project</strong>
+            <div class="sep5"></div>
+            <span class="hfade">This is a place to share and explore</span>
+        </div>
+        <div class="inner">
+            <div class="sep5"></div>
+            <div align="center">
+                <a href="/signup" class="super normal button">Sign Up Right Now</a>
+                <div class="sep5"></div>
+                <div class="sep10"></div>
+                Already have an account? please&nbsp;
+                <a href="/signin">Sign In</a>
+            </div>
+        </div>
+    </div>
+    {% end %}
+{% end %}
+
+{% block wrapper_rightbar_box2 %}
+    <div class="box">
+        <div class="cell">
+            <span>Community Statue</span>
+        </div>
+        <div class="cell">
+            <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tbody>
+                    <tr>
+                        <td width="90" align="right">
+                            <span class="gray">Regist Member</span>
+                            <td width="10"></td>
+                            <td width="auto" align="left"><strong>{{ forum['rMNum'] }}</strong></td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="90" align="right">
+                            <span class="gray">Topic</span>
+                            <td width="10"></td>
+                            <td width="auto" align="left"><strong>{{ forum['aTNum'] }}</strong></td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="90" align="right">
+                            <span class="gray">Reply</span>
+                            <td width="10"></td>
+                            <td width="auto" align="left"><strong>{{ forum['aRNum'] }}</strong></td>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="inner">
+            <span>></span>
+            <a href="">Wealth Ranking List</a>
+        </div>
+    </div>
+{% end %}
+
+{% block wrapper_main_box1 %}
+    <div class="box">
+        <div id="Tabs" class="cell" style="background-color: #fff; border-top-left-radius: 3px; border-top-right-radius: 3px;">
+            {% for section in sections %}
+            <a href="/" class="tab">{{section}}</a>
+            {% end %}
+        </div>
+        {% if posts %}
+            {% for post in posts %}
+                {% module Post(post) %}
+            {% end %}
+        {% else %}
+        {% end %}
+    </div>
+{% end %}
+
+{% block wrapper_main_box2 %}
+    <div class="box">
+        <div class="cell">
+            <div class="fr">
+                <a href="/">See all the theme</a>
+            </div>
+            <span class="hfade">
+                <strong>Ran</strong>
+                " / Theme Navigation"
+            </span>
+        </div>
+        <div class="cell">
+            <table cellpadding="5" cellspacing="0" border="0" width="100%">
+                <tbody>
+                    <tr>
+                        <td align="right" width="60">
+                            <span class="hfade">All</span>
+                        </td>
+                        <td style="line-height: 200%; padding-left: 10px;">
+                            {% for section in sections %}
+                            <a href="/" style="font-size: 14px;">{{section}}</a>
+                            {% end %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="inner"></div>
+    </div>
+{% end %}

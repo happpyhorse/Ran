@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }}</title>
+
+    <!-- Bootstrap -->
+    <link href="{{ static_url("css/bootstrap.min.css") }}" rel="stylesheet">
+    <link href="{{ static_url("css/home.css") }}" rel="stylesheet">
+    <link href="{{ static_url("css/signin.css") }}" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div id="Top">
+        <div class="content">
+            <div style="padding-top: 6px;">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td width="110" align="left">
+                            <a href="/" name="top" title="ran">
+                                <img src="{{ static_url('pic/brand3.png') }}" alt="ran" border="0" align="default" width="94" height="30">
+                            </a>
+                            </td>
+                            <td width="auto" align="left">
+                                <form class="form-inline" action="">
+                                    <div class="form-group"><input id="top-2-inputSearch" class="form-control" type="text" placeholder="Search"></div>
+                                    <button class="btn btn-default" type="submit">Search</button>
+                                </form>
+                            </td>
+                            {% block top_3 %}{% end %}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="Wrapper">
+        <div class="content">
+            <div id="RightBar">
+                <div class="sep20"></div>
+                {% block wrapper_rightbar_box1 %}{% end %}
+                <div class="sep20"></div>
+                {% block wrapper_rightbar_box2 %}{% end %}
+            </div>
+            <div id="Main">
+                <div class="sep20"></div>
+                {% block wrapper_main_box1 %}{% end %}
+                <div class="sep20"></div>
+                {% block wrapper_main_box2 %}{% end %}
+                <div class="sep20"></div>
+                {% block wrapper_main_box3 %}{% end %}
+            </div>
+        </div>
+        <div class="sep20"></div>
+    </div>
+    <div id="Bottom">
+        <div class="content">
+            <div class="inner">
+                <span class="small hfade">
+                VERSION: 0.0.1
+                <br>
+                ♥ Do have faith in what you're doing.
+                </span>
+            </div>
+        </div>
+    </div>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="http://cdn.bootcss.com/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src=" {{ static_url('js/bootstrap.min.js') }}"></script>
+    <script src=" {{ static_url('js/validator.min.js') }}"></script>
+    {% block script %}{% end %}
+  </body>
+</html>

@@ -1,0 +1,50 @@
+{% extends "t_home.html" %}
+
+{% block wrapper_main_box1 %}
+    <div class="box" id="box">
+        <div class="cell">
+            <a href="">Ran</a>
+            <span class="chevron">&nbsp;›&nbsp;</span>
+            " New Topic"
+        </div>
+        <form id="compose" action="/new" method="post">
+            <div class="cell">
+                <div id="title_remaining" class="fr hfade">120</div>
+                Topic Title
+            </div>
+            <div class="cell" style="padding: 0px; background-color: #fff;">
+                <input class="form-control" name="title" type="text" autofocus="autofocus" placeholder="Please enter the topic title. If it could express fully, the main content could be empty" required>
+            </div>
+            <div class="cell">
+                <div id="content_remaining" class="fr hfade">20000</div>
+                Main Content
+            </div>
+            <div class="cell">
+                <textarea class="form-control" name="content" cols="30" rows="20" required></textarea>
+            </div>
+            <div class="cell">
+                <select id="nodes" name="sectionName" style="width:300; font-size: 14px;" data-placeholder="Select a node">
+                    {% for section in sections %}
+                    <option value="{{section}}">{{section}}</option>
+                    {% end %}
+                </select>
+            </div>
+            <div class="cell">
+                Hot Node &nbsp;
+                {% for section in sections %}
+                <a href="/" class="node">{{section}}</a>
+                {% end %}
+            </div>
+            <div class="cell">
+                <div class="fr">
+                    <button type="submit" class="super normal button">Create</button>
+                </div>
+                <button class="super normal button">Preview</button>
+            </div>
+        </form>
+    </div>
+{% end %}
+
+{% block wrapper_main_box2 %}{% end %}
+
+{% block wrapper_main_box3 %}{% end %}
