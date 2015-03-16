@@ -9,7 +9,7 @@ class DB:
         self.conn = MySQLdb.connect(
                 host = 'localhost',
                 user = 'root',
-                #passwd = passwd,
+                passwd = 'root1314',
                 db = 'forum',
                 port = 3306,
                 )
@@ -23,6 +23,7 @@ class DB:
         try:
             return self.cur.execute(sqlStr)
         except Exception, e:
+            print e
             return e
 
     def insert_data(self, sqlStr):
@@ -40,7 +41,7 @@ class DB:
         return res
 
 
-    def create_table():
+    def create_table(self):
         sqlStr = [
             'CREATE TABLE Admin(AdminID INTEGER,Password VARCHAR(16),Email VARCHAR(16),Icon VARCHAR(16),Admin_Name VARCHAR(16),PRIMARY KEY (AdminID));',
             'CREATE TABLE User(UID INTEGER,U_AccessLevel INTEGER,Password VARCHAR(16),Email VARCHAR(16),Icon VARCHAR(16),U_Name VARCHAR(16),U_Address VARCHAR(16),PostalCode VARCHAR(8),Points INTEGER,AdminID INTEGER,PRIMARY KEY (UID),FOREIGN KEY (AdminID) REFERENCES Admin(AdminID));',
@@ -60,11 +61,8 @@ class DB:
 
 def main():
     db = DB()
-    #create_table()
-    #insert_data()
-    db.query_data()
-    #cur.close()
-    #conn.close()
+    db.create_table()
+    db.close_conn()
 
 
 if __name__ == '__main__':
