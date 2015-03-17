@@ -5,7 +5,7 @@
     <td width="570" align="right" style="padding-top: 2px;">
         <a href="/home" class="top">Home</a>
         &nbsp;&nbsp;&nbsp;
-        <a href="" class="top">{{user['account']}}</a>
+        <a href="/config" class="top">{{user['account']}}</a>
         &nbsp;&nbsp;&nbsp;
         <a href="/config" class="top">Config</a>
         &nbsp;&nbsp;&nbsp;
@@ -30,13 +30,13 @@
                 <tbody>
                     <tr>
                         <td width="48" valign="top">
-                            <a href="/">
+                            <a href="/config">
                                 <img src="{{ static_url(user['icon']) }}" class="avator" border="0" align="default" style="max-width: 48px; max-height: 48px;">
                             </a>
                         </td>
                         <td width="10" valign="top"></td>
                         <td width="auto" align="left">
-                            <span class="bigger"><a href="/">{{ user['account'] }}</a></span>
+                            <span class="bigger"><a href="/config">{{ user['account'] }}</a></span>
                         </td>
                     </tr>
                 </tbody>
@@ -46,21 +46,21 @@
                 <tbody>
                     <tr>
                         <td width="33%" align="center">
-                            <a href="/" class="dark" style="display: block;">
+                            <a href="/home" class="dark" style="display: block;">
                                 <span class="bigger">{{ user['pNum'] }}</span>
                                 <div class="sep3"></div>
                                 <span class="bigger">Post</span>
                             </a>
                         </td>
                         <td width="34%" style="border-left: 1px solid rgba(100, 100, 100, 0.4); border-right: 1px solid rgba(100, 100, 100, 0.4);" align="center">
-                            <a href="/">
+                            <a href="/home">
                                 <span class="bigger">{{ user['rNum'] }}</span>
                                 <div class="sep3"></div>
                                 <span class="bigger">Reply</span>
                             </a>
                         </td>
                         <td width="33%" align="center">
-                            <a href="/">
+                            <a href="/home">
                                 <span class="bigger">{{ user['fNum'] }}</span>
                                 <div class="sep3"></div>
                                 <span class="bigger">Friends</span>
@@ -86,10 +86,10 @@
             </table>
         </div>
         <div class="cell">
-            <a href="/">x unread message</a>
+            <a href="/home">x unread message</a>
         </div>
         <div class="inner">
-            <div float="right" text-align="right"><a href="/">balance: {{ user['balance'] }}</a></div>
+            <div float="right" text-align="right"><a href="/home">balance: {{ user['balance'] }}</a></div>
         </div>
     </div>
     {% else %}
@@ -147,7 +147,7 @@
         </div>
         <div class="inner">
             <span>></span>
-            <a href="">Wealth Ranking List</a>
+            <a href="/home">Wealth Ranking List</a>
         </div>
     </div>
 {% end %}

@@ -35,20 +35,20 @@ class MainHandler(tornado.web.RequestHandler):
 def get_posts():
     res = []
     db = mysql_db.DB()
-    ret = db.query_data('select * from User a, Section c, P_Topic d, Post_Include_P_Edit b where a.uid = b.uid and b.sid = c.sid and b.type = 1 and d.t_pid = b.pid')
+    ret = db.query_data('select a.u_name, a.icon, b.pid, b.p_content, b.p_date, c.s_name, d.t_title, e.num  from User a, Section c, P_Topic d, Post_Include_P_Edit b left join (select t_pid, count(*) as num from P_Reply group by t_pid) e on b.pid=e.t_pid where a.uid = b.uid and b.sid = c.sid and b.type = 1 and d.t_pid = b.pid')
     db.close_conn()
     print ret
     for i in ret:
         item = {}
-        item['pid'] = i[16]
-        item['icon'] = i[4]
-        item['user'] = i[5]
-        item['title'] = i[14]
-        item['content'] = i[19]
-        item['section'] = i[11]
-        item['time'] = i[20]
+        item['pid'] = i[2]
+        item['icon'] = i[1]
+        item['user'] = i[0]
+        item['title'] = i[6]
+        item['content'] = i[3]
+        item['section'] = i[5]
+        item['time'] = i[4]
         item['lastRe'] = 'to be added'
-        item['reNum'] = random.randint(0, 100)
+        item['reNum'] = 0 if not i[7] else i[7]
         res.append(item)
     print res
     return res
@@ -56,7 +56,7 @@ def get_posts():
 def get_replys(pid):
     res = []
     db = mysql_db.DB()
-    ret = db.query_data('select * from User a, Post_Include_P_Edit b, P_Reply c where a.uid = b.uid and b.type = 2 and b.pid  = c.pid = %d ' % int(pid))
+    ret = db.query_data('select * from User a, Post_Include_P_Edit b, P_Reply c where a.uid = b.uid and b.type = 2 and b.pid = c.pid and c.t_pid = %d' % int(pid))
     db.close_conn()
     print ret
     for i in ret:
@@ -152,9 +152,10 @@ class SignInHandler(tornado.web.RequestHandler):
     def get(self):
         sections = get_sections()
         action = self.get_argument('action', None)
+        warning = self.get_argument('warning', None)
         if action == 'logout':
             self.set_secure_cookie('user', '')
-        self.render('t_signin.html', title='Ran - Sign In', sections=sections)
+        self.render('t_signin.html', title='Ran - Sign In', sections=sections, warning=warning)
 
     def post(self):
         pass
@@ -339,7 +340,7 @@ class DBHandler(tornado.web.RequestHandler):
         res = db.query_data(sqlStr)
         db.close_conn()
         if len(res) == 0:
-            self.redirect('/signin')
+            self.redirect('/signin?warning=Invalid Account or Password')
         else:
             if not self.get_secure_cookie('user'):
                 uid = res[0][0]

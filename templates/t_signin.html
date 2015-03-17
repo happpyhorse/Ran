@@ -35,6 +35,9 @@
 {% block wrapper_main_box1 %}
     <div class="box">
         <div class="cell">
+            <strong>{{warning}}<strong>
+        </div>
+        <div class="cell">
             <form class="form-signin" action="/db" method="post">
                 <h2 class="form-signin-heading">Please sign in</h2>
                 <input id="inputEmail" name="mail" class="form-control" type="email" placeholder="Email Address" required="" autofocus="">
