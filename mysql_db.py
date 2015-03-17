@@ -9,7 +9,7 @@ class DB:
         self.conn = MySQLdb.connect(
                 host = 'localhost',
                 user = 'root',
-                passwd = 'root1314',
+                #passwd = 'root1314',
                 db = 'forum',
                 port = 3306,
                 )

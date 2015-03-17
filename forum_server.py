@@ -21,35 +21,39 @@ class MainHandler(tornado.web.RequestHandler):
         sections = get_sections()
         uid = self.get_secure_cookie('user')
         forum = get_forum()
-        posts = get_posts()
-        print 'posts: ', posts
+        #posts = get_posts()
+        allPosts = get_all_posts()
         if uid:
             user = get_user(uid)
         else:
             user = {}
-        self.render('t_home.html', title='Ran - Home', user=user, forum=forum, sections=sections, posts=posts)
+        self.render('t_home.html', title='Ran - Home', user=user, forum=forum, sections=sections, allPosts=allPosts)
 
     def post(self):
         pass
 
-def get_posts():
-    res = []
-    db = mysql_db.DB()
-    ret = db.query_data('select a.u_name, a.icon, b.pid, b.p_content, b.p_date, c.s_name, d.t_title, e.num  from User a, Section c, P_Topic d, Post_Include_P_Edit b left join (select t_pid, count(*) as num from P_Reply group by t_pid) e on b.pid=e.t_pid where a.uid = b.uid and b.sid = c.sid and b.type = 1 and d.t_pid = b.pid')
-    db.close_conn()
-    print ret
-    for i in ret:
-        item = {}
-        item['pid'] = i[2]
-        item['icon'] = i[1]
-        item['user'] = i[0]
-        item['title'] = i[6]
-        item['content'] = i[3]
-        item['section'] = i[5]
-        item['time'] = i[4]
-        item['lastRe'] = 'to be added'
-        item['reNum'] = 0 if not i[7] else i[7]
-        res.append(item)
+def get_all_posts():
+    res = {}
+    sections = get_sections()
+    for section in sections:
+        tmp = []
+        db = mysql_db.DB()
+        ret = db.query_data('select a.u_name, a.icon, b.pid, b.p_content, b.p_date, c.s_name, d.t_title, e.num  from User a, Section c, P_Topic d, Post_Include_P_Edit b left join (select t_pid, count(*) as num from P_Reply group by t_pid) e on b.pid=e.t_pid where a.uid = b.uid and b.sid = c.sid and b.type = 1 and d.t_pid = b.pid and c.s_name = "%s"' % section)
+        db.close_conn()
+        print ret
+        for i in ret:
+            item = {}
+            item['pid'] = i[2]
+            item['icon'] = i[1]
+            item['user'] = i[0]
+            item['title'] = i[6]
+            item['content'] = i[3]
+            item['section'] = i[5]
+            item['time'] = i[4]
+            item['lastRe'] = 'to be added'
+            item['reNum'] = 0 if not i[7] else i[7]
+            tmp.append(item)
+        res[section] = tmp
     print res
     return res
 
@@ -178,7 +182,6 @@ class SignUpHandler(tornado.web.RequestHandler):
         email =  self.get_argument('email')
         account =  self.get_argument('account')
         pwd =  self.get_argument('pwd1')
-        name =  self.get_argument('name')
         print email, account, pwd, name
         db = mysql_db.DB()
         res = db.query_data('select Uid from User order by uid desc limit 1')
@@ -191,7 +194,7 @@ class SignUpHandler(tornado.web.RequestHandler):
             "insert into User value",
             "(%d, 0, '%s', '%s', 'pic/default.png', '%s', '', '', 10, 1)"
         ]
-        sqlStr = ''.join(sqlStr) % (uid, pwd, email, name)
+        sqlStr = ''.join(sqlStr) % (uid, pwd, email, account)
         print sqlStr
         res = db.insert_data(sqlStr)
         db.close_conn()

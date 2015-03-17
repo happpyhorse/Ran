@@ -34,9 +34,11 @@
 
 {% block wrapper_main_box1 %}
     <div class="box">
+        {% if warning %}
         <div class="cell">
-            <strong>{{warning}}<strong>
+            <div class="alert alert-danger" role="alert">{{warning}}</div>
         </div>
+        {% end %}
         <div class="cell">
             <form class="form-signin" action="/db" method="post">
                 <h2 class="form-signin-heading">Please sign in</h2>

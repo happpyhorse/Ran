@@ -156,15 +156,27 @@
     <div class="box">
         <div id="Tabs" class="cell" style="background-color: #fff; border-top-left-radius: 3px; border-top-right-radius: 3px;">
             {% for section in sections %}
-            <a href="/" class="tab">{{section}}</a>
+            <a href="#wmb1-{{section}}" class="tab" role="tab" data-toggle="tab">{{section}}</a>
             {% end %}
         </div>
-        {% if posts %}
-            {% for post in posts %}
-                {% module Post(post) %}
+        <div class="tab-content">
+            {% if allPosts%}
+                {% for sName, posts in allPosts.items()%}
+                    {% if sName == 'sport' %}
+                        <div id="wmb1-{{sName}}" class="tab-pane active" role="tabpanel">
+                    {% else %}
+                        <div id="wmb1-{{sName}}" class="tab-pane" role="tabpanel">
+                    {% end %}
+                            {% if posts %}
+                                {% for post in posts %}
+                                    {% module Post(post) %}
+                                {% end %}
+                            {% else %}
+                            {% end %}
+                    </div>
+                {% end %}
             {% end %}
-        {% else %}
-        {% end %}
+        </div>
     </div>
 {% end %}
 
@@ -172,7 +184,7 @@
     <div class="box">
         <div class="cell">
             <div class="fr">
-                <a href="/">See all the theme</a>
+                <a href="/home">See all the theme</a>
             </div>
             <span class="hfade">
                 <strong>Ran</strong>
@@ -188,7 +200,7 @@
                         </td>
                         <td style="line-height: 200%; padding-left: 10px;">
                             {% for section in sections %}
-                            <a href="/" style="font-size: 14px;">{{section}}</a>
+                            <a href="/home" class="tab">{{section}}</a>
                             {% end %}
                         </td>
                     </tr>

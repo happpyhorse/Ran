@@ -4,22 +4,22 @@
         <tbody>
             <tr>
                 <td width="48" valign="top" align="center">
-                    <a href="/"><img src="{{ static_url(post["icon"]) }}" class="avatar" border="0" align="default" width="32"></a>
+                    <a href="/home"><img src="{{ static_url(post["icon"]) }}" class="avatar" border="0" align="default" width="32"></a>
                 </td>
                 <td width="10"></td>
                 <td width="auto" valign="middle">
                     <span class="item_title"><a href="/topic?pid={{ post["pid"] }}&icon={{ post["icon"] }}&account={{ post["user"] }}&time={{ post["time"] }}&content={{ post["content"] }}&title={{ post["title"] }}&section={{ post["section"] }}">{{ post["title"] }}</a></span>
                     <div class="sep5"></div>
                     <span class="small hfade">
-                        <a class="node" href="">{{ post["section"] }}</a>
+                        <a class="node" href="/home">{{ post["section"] }}</a>
                          " &nbsp;•&nbsp; "
-                        <strong><a href="">{{ post["user"] }}</a></strong>
-                        " &nbsp;•&nbsp; {{ post["time"] }} &nbsp;•&nbsp; 最后回复来自
-                        <strong><a href="">{{ post["lastRe"] }}</a></strong>
+                        <strong><a href="/home">{{ post["user"] }}</a></strong>
+                        " &nbsp;•&nbsp; {{ post["time"] }} &nbsp;•&nbsp; last reply
+                        <strong><a href="/home"><span class="badge"></span> {{ post["lastRe"] }}</a></strong>
                     </span>
                 </td>
                 <td width="50" align="right" valign="middle">
-                    <a class="count_livid" href="/">{{ post["reNum"] }}</a>
+                    <a href=""><span class="badge">{{ post["reNum"] }}</span></a>
                 </td>
             </tr>
         </tbody>
