@@ -145,9 +145,24 @@
                 </tbody>
             </table>
         </div>
+        <div class="cell">
+            <span>Wealth Ranking List</span>
+        </div>
         <div class="inner">
-            <span>></span>
-            <a href="/home">Wealth Ranking List</a>
+            <table class="table table-condensed table-hover">
+                <tr class="info">
+                    <td>Rank</td>
+                    <td>Account</td>
+                    <td>Points</td>
+                </tr>
+                {% for index in range(0,len(wealthList))%}
+                <tr>
+                    <td>{{index + 1}}</td>
+                    <td>{{wealthList[index][0]}}</td>
+                    <td>{{wealthList[index][1]}}</td>
+                </tr>
+                {% end %}
+            </table>
         </div>
     </div>
 {% end %}

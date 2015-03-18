@@ -23,14 +23,25 @@ class MainHandler(tornado.web.RequestHandler):
         forum = get_forum()
         #posts = get_posts()
         allPosts = get_all_posts()
+        wealthList = get_wealth_list()
         if uid:
             user = get_user(uid)
         else:
             user = {}
-        self.render('t_home.html', title='Ran - Home', user=user, forum=forum, sections=sections, allPosts=allPosts)
+        self.render(
+                't_home.html', title='Ran - Home',
+                user=user, forum=forum, sections=sections,
+                allPosts=allPosts, wealthList=wealthList,
+                )
 
     def post(self):
         pass
+
+def get_wealth_list():
+    db = mysql_db.DB()
+    res = db.query_data('select u_name, points from User a order by points desc limit 5')
+    return res
+
 
 def get_all_posts():
     res = {}
@@ -55,6 +66,23 @@ def get_all_posts():
             tmp.append(item)
         res[section] = tmp
     print res
+    return res
+
+def get_post_topic(pid):
+    db = mysql_db.DB()
+    print 'pid: ', pid
+    ret = db.query_data('select a.u_name, a.icon, b.pid, b.p_content, b.p_date, c.s_name, d.t_title  from User a, Section c, P_Topic d, Post_Include_P_Edit b where a.uid = b.uid and b.sid = c.sid and b.type = 1 and d.t_pid = b.pid and b.pid = %d' % int(pid))
+    ret = ret[0]
+    print 'ret: ', ret
+    db.close_conn()
+    res = {}
+    res['pid'] = ret[2]
+    res['icon'] = ret[1]
+    res['account'] = ret[0]
+    res['title'] = ret[6]
+    res['content'] = ret[3]
+    res['section'] = ret[5]
+    res['time'] = ret[4]
     return res
 
 def get_replys(pid):
@@ -212,14 +240,8 @@ class TopicHandler(tornado.web.RequestHandler):
         uid = self.get_secure_cookie('user')
         user = get_user(uid)
         replys = get_replys(pid)
+        post = get_post_topic(pid)
         forum = get_forum()
-        icon = self.get_argument('icon')
-        account = self.get_argument('account')
-        time = self.get_argument('time')
-        content = self.get_argument('content')
-        title = self.get_argument('title')
-        section = self.get_argument('section')
-        post = {'pid': pid, 'icon': icon, 'account': account, 'time': time, 'content': content, 'title': title, 'section': section}
         print post
         self.render('t_topic.html', title='Ran - Topic', user=user, forum=forum, replys=replys, post=post)
 
@@ -256,7 +278,7 @@ class TopicHandler(tornado.web.RequestHandler):
         res = db.insert_data(sqlStr)
         db.close_conn()
         if res == 1:
-            self.redirect('/home')
+            self.redirect('/topic?pid=%d' % int(tPid))
         else:
             self.redirect('/home')
 
