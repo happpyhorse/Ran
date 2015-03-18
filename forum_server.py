@@ -141,10 +141,15 @@ class NewHandler(tornado.web.RequestHandler):
     def get(self):
         sections = get_sections()
         forum = get_forum()
+        wealthList = get_wealth_list()
         uid = self.get_secure_cookie('user')
         if uid:
             user = get_user(uid)
-        self.render('t_new.html', title='Ran - New', sections=sections, forum=forum, user=user)
+        self.render(
+                't_new.html', title='Ran - New',
+                sections=sections, forum=forum, user=user,
+                wealthList=wealthList,
+                )
         pass
 
     def post(self):
@@ -242,8 +247,13 @@ class TopicHandler(tornado.web.RequestHandler):
         replys = get_replys(pid)
         post = get_post_topic(pid)
         forum = get_forum()
+        wealthList = get_wealth_list()
         print post
-        self.render('t_topic.html', title='Ran - Topic', user=user, forum=forum, replys=replys, post=post)
+        self.render(
+                't_topic.html', title='Ran - Topic',
+                user=user, forum=forum, replys=replys,
+                post=post, wealthList=wealthList,
+                )
 
     def post(self):
         uid = self.get_secure_cookie('user')
@@ -289,8 +299,13 @@ class ConfigHandler(tornado.web.RequestHandler):
         user = get_user(uid)
         sections = get_sections()
         forum = get_forum()
+        wealthList = get_wealth_list()
         warning = self.get_argument('warning', None)
-        self.render('t_config.html', title='Ran - Config', user=user, setions=sections, forum=forum, warning=warning)
+        self.render(
+                't_config.html', title='Ran - Config',
+                user=user, setions=sections, forum=forum,
+                warning=warning, wealthList=wealthList,
+                )
 
     def post(self):
         uid = int(self.get_secure_cookie('user'))
