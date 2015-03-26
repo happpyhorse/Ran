@@ -4,7 +4,7 @@
         <tbody>
             <tr>
                 <td width="48" valign="top" align="center">
-                    <a href="/home"><img src="{{ static_url(post["icon"]) }}" class="avatar" border="0" align="default" width="32"></a>
+                    <a href="/member/all/{{post['uid']}}"><img src="{{ static_url(post["icon"]) }}" class="avatar" border="0" align="default" width="32"></a>
                 </td>
                 <td width="10"></td>
                 <td width="auto" valign="middle">
@@ -13,13 +13,13 @@
                     <span class="small hfade">
                         <a class="node" href="/home">{{ post["section"] }}</a>
                          " &nbsp;•&nbsp; "
-                        <strong><a href="/home">{{ post["user"] }}</a></strong>
+                        <strong><a href="/member/all/{{post['uid']}}">{{ post["user"] }}</a></strong>
                         " &nbsp;•&nbsp; {{ post["time"] }} &nbsp;•&nbsp; last reply
                         <strong><a href="/home"><span class="badge"></span> {{ post["lastRe"] }}</a></strong>
                     </span>
                 </td>
                 <td width="50" align="right" valign="middle">
-                    <a href=""><span class="badge">{{ post["reNum"] }}</span></a>
+                    <a href="/topic?pid={{ post["pid"] }}"><span class="badge">{{ post["reNum"] }}</span></a>
                 </td>
             </tr>
         </tbody>

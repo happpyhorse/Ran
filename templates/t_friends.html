@@ -113,110 +113,21 @@
     {% end %}
 {% end %}
 
-{% block wrapper_rightbar_box2 %}
+{% block wrapper_main_box1 %}
     <div class="box">
-        <div class="cell">
-            <span>Community Statue</span>
-        </div>
         <div class="cell">
             <table cellpadding="0" cellspacing="0" border="0" width="100%">
                 <tbody>
                     <tr>
-                        <td width="90" align="right">
-                            <span class="gray">Regist Member</span>
-                            <td width="10"></td>
-                            <td width="auto" align="left"><strong>{{ forum['rMNum'] }}</strong></td>
+                        <td width="73" valign="top" align="center">
+                            <img class="avator" src="{{ static_url(user["icon"]) }}" alt="" border="0" align="default" style="max-width: 73px; max-height: 73px;">
+                            <div class="sep10"></div>
                         </td>
-                    </tr>
-                    <tr>
-                        <td width="90" align="right">
-                            <span class="gray">Topic</span>
-                            <td width="10"></td>
-                            <td width="auto" align="left"><strong>{{ forum['aTNum'] }}</strong></td>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="90" align="right">
-                            <span class="gray">Reply</span>
-                            <td width="10"></td>
-                            <td width="auto" align="left"><strong>{{ forum['aRNum'] }}</strong></td>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="cell">
-            <span>Wealth Ranking List</span>
-        </div>
-        <div class="inner">
-            <table class="table table-condensed table-hover">
-                <tr class="info">
-                    <td>Rank</td>
-                    <td>Account</td>
-                    <td>Points</td>
-                </tr>
-                {% for index in range(0,len(wealthList))%}
-                <tr>
-                    <td>{{index + 1}}</td>
-                    <td>{{wealthList[index][0]}}</td>
-                    <td>{{wealthList[index][1]}}</td>
-                </tr>
-                {% end %}
-            </table>
-        </div>
-    </div>
-{% end %}
-
-{% block wrapper_main_box1 %}
-    <div class="box">
-        <div id="Tabs" class="cell" style="background-color: #fff; border-top-left-radius: 3px; border-top-right-radius: 3px;">
-            {% for section in sections %}
-            <a href="#wmb1-{{section}}" class="tab" role="tab" data-toggle="tab">{{section}}</a>
-            {% end %}
-        </div>
-        <div class="tab-content">
-            {% if allPosts%}
-                {% for sName, posts in allPosts.items()%}
-                    {% if sName == 'sport' %}
-                        <div id="wmb1-{{sName}}" class="tab-pane active" role="tabpanel">
-                    {% else %}
-                        <div id="wmb1-{{sName}}" class="tab-pane" role="tabpanel">
-                    {% end %}
-                            {% if posts %}
-                                {% for post in posts %}
-                                    {% module Post(post) %}
-                                {% end %}
-                            {% else %}
-                            {% end %}
-                    </div>
-                {% end %}
-            {% end %}
-        </div>
-    </div>
-{% end %}
-
-{% block wrapper_main_box2 %}
-    <div class="box">
-        <div class="cell">
-            <div class="fr">
-                <a href="/home">See all the theme</a>
-            </div>
-            <span class="hfade">
-                <strong>Ran</strong>
-                " / Theme Navigation"
-            </span>
-        </div>
-        <div class="cell">
-            <table cellpadding="5" cellspacing="0" border="0" width="100%">
-                <tbody>
-                    <tr>
-                        <td align="right" width="60">
-                            <span class="hfade">All</span>
-                        </td>
-                        <td style="line-height: 200%; padding-left: 10px;">
-                            {% for section in sections %}
-                            <a href="/home" class="tab">{{section}}</a>
-                            {% end %}
+                        <td width="10"></td>
+                        <td width="auto" valign="top" align="left">
+                            <h1 valign="top" style="margin-bottom: 5px; margin-top: 0px;" >{{user["account"]}}</h1>
+                            <div class="sep10"></div>
+                            <span class="gray">The No.{{user["id"]}} member in this forum.</span>
                         </td>
                     </tr>
                 </tbody>
@@ -224,4 +135,14 @@
         </div>
         <div class="inner"></div>
     </div>
+    <div class="sep20"></div>
+    <div class="box">
+        <div class="cell"><span class="gray">The friends of {{user["account"]}}'s posts</span></div>
+        {% if posts %}
+            {% for post in posts %}
+                {% module Post(post) %}
+            {% end %}
+        {% end %}
+    </div>
+    <div class="sep20"></div>
 {% end %}

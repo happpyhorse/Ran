@@ -49,7 +49,7 @@ def get_all_posts():
     for section in sections:
         tmp = []
         db = mysql_db.DB()
-        ret = db.query_data('select a.u_name, a.icon, b.pid, b.p_content, b.p_date, c.s_name, d.t_title, e.num  from User a, Section c, P_Topic d, Post_Include_P_Edit b left join (select t_pid, count(*) as num from P_Reply group by t_pid) e on b.pid=e.t_pid where a.uid = b.uid and b.sid = c.sid and b.type = 1 and d.t_pid = b.pid and c.s_name = "%s"' % section)
+        ret = db.query_data('select a.u_name, a.icon, b.pid, b.p_content, b.p_date, c.s_name, d.t_title, e.num, a.uid  from User a, Section c, P_Topic d, Post_Include_P_Edit b left join (select t_pid, count(*) as num from P_Reply group by t_pid) e on b.pid=e.t_pid where a.uid = b.uid and b.sid = c.sid and b.type = 1 and d.t_pid = b.pid and c.s_name = "%s"' % section)
         db.close_conn()
         print ret
         for i in ret:
@@ -57,6 +57,7 @@ def get_all_posts():
             item['pid'] = i[2]
             item['icon'] = i[1]
             item['user'] = i[0]
+            item['uid'] = i[8]
             item['title'] = i[6]
             item['content'] = i[3]
             item['section'] = i[5]
@@ -71,7 +72,7 @@ def get_all_posts():
 def get_post_topic(pid):
     db = mysql_db.DB()
     print 'pid: ', pid
-    ret = db.query_data('select a.u_name, a.icon, b.pid, b.p_content, b.p_date, c.s_name, d.t_title  from User a, Section c, P_Topic d, Post_Include_P_Edit b where a.uid = b.uid and b.sid = c.sid and b.type = 1 and d.t_pid = b.pid and b.pid = %d' % int(pid))
+    ret = db.query_data('select a.u_name, a.icon, b.pid, b.p_content, b.p_date, c.s_name, d.t_title, a.uid  from User a, Section c, P_Topic d, Post_Include_P_Edit b where a.uid = b.uid and b.sid = c.sid and b.type = 1 and d.t_pid = b.pid and b.pid = %d' % int(pid))
     ret = ret[0]
     print 'ret: ', ret
     db.close_conn()
@@ -83,6 +84,7 @@ def get_post_topic(pid):
     res['content'] = ret[3]
     res['section'] = ret[5]
     res['time'] = ret[4]
+    res['id'] = ret[7]
     return res
 
 def get_replys(pid):
@@ -93,6 +95,7 @@ def get_replys(pid):
     print ret
     for i in ret:
         item = {}
+        item['id'] = i[0]
         item['icon'] = i[4]
         item['user'] = i[5]
         item['time'] = i[14]
@@ -133,6 +136,7 @@ def get_user(uid):
     res['rNum'] = ret[0][0]
     ret = db.query_data('select count(user_uid) from Make_Friends where user_uid = %d' % uid)
     res['fNum'] = ret[0][0]
+    res['id'] = uid
     db.close_conn()
     print 'res: ', res
     return res
@@ -158,6 +162,7 @@ class NewHandler(tornado.web.RequestHandler):
         title = self.get_argument('title')
         content = self.get_argument('content')
         sectionName = self.get_argument('sectionName')
+        print content
         db = mysql_db.DB()
         res = db.query_data('select t_pid from P_Topic order by t_pid desc limit 1')
         if res:
@@ -387,6 +392,118 @@ class DBHandler(tornado.web.RequestHandler):
                 self.set_secure_cookie('user', str(uid))
             self.redirect('/home')
 
+class MemberHandler(tornado.web.RequestHandler):
+    def get(self, part, uid):
+        user = get_user(uid)
+        cUid = self.get_secure_cookie('user')
+        cUser = get_user(cUid)
+        posts = get_post_by_id(uid)
+        replys = get_reply_by_id(uid)
+        if part == 'reply':
+            posts = []
+        elif part == 'post':
+            replys = []
+        self.render(
+                't_member.html', title='Ran - Member',
+                user=user, replys=replys, posts=posts,
+                cUser=cUser,
+                )
+
+def get_post_by_id(uid):
+    db = mysql_db.DB()
+    ret = db.query_data('select a.u_name, a.icon, b.pid, b.p_content, b.p_date, c.s_name, d.t_title, e.num  from User a, Section c, P_Topic d, Post_Include_P_Edit b left join (select t_pid, count(*) as num from P_Reply group by t_pid) e on b.pid=e.t_pid where a.uid = b.uid and b.sid = c.sid and b.type = 1 and d.t_pid = b.pid and a.uid = %d' % int(uid))
+    db.close_conn()
+    tmp = []
+    for i in ret:
+        item = {}
+        item['account'] = ret[0]
+        item['pid'] = i[2]
+        item['icon'] = i[1]
+        item['user'] = i[0]
+        item['uid'] = uid
+        item['title'] = i[6]
+        item['content'] = i[3]
+        item['section'] = i[5]
+        item['time'] = i[4]
+        item['lastRe'] = 'to be added'
+        item['reNum'] = 0 if not i[7] else i[7]
+        tmp.append(item)
+    return tmp
+
+def get_reply_by_id(uid):
+    res = []
+    db = mysql_db.DB()
+    ret = db.query_data('select * from User a, Post_Include_P_Edit b, P_Reply c where a.uid = b.uid and b.type = 2 and b.pid = c.pid and a.uid = %d' % int(uid))
+    db.close_conn()
+    print ret
+    for i in ret:
+        item = {}
+        item['id'] = i[0]
+        item['icon'] = i[4]
+        item['user'] = i[5]
+        item['time'] = i[14]
+        item['content'] = i[13]
+        res.append(item)
+    print res
+    return res
+
+class FriendsHandler(tornado.web.RequestHandler):
+    def get(self):
+        uid = self.get_secure_cookie('user')
+        user = get_user(uid)
+        posts = get_friends_post(uid)
+        self.render(
+                't_friends.html', title='Ran - Friends',
+                user=user, posts=posts,
+                )
+
+def get_friends_post(uid):
+    db = mysql_db.DB()
+    ret = db.query_data('select a.u_name, a.icon, b.pid, b.p_content, b.p_date, c.s_name, d.t_title, e.num  from User a, Section c, P_Topic d, Post_Include_P_Edit b left join     (select t_pid, count(*) as num from P_Reply group by t_pid) e on b.pid=e.t_pid where a.uid = b.uid and b.sid = c.sid and b.type = 1 and d.t_pid = b.pid and a.uid in (select Friend_Uid from Make_Friends where User_Uid = %d)' % int(uid))
+    db.close_conn()
+    tmp = []
+    for i in ret:
+        item = {}
+        item['account'] = ret[0]
+        item['pid'] = i[2]
+        item['icon'] = i[1]
+        item['user'] = i[0]
+        item['uid'] = uid
+        item['title'] = i[6]
+        item['content'] = i[3]
+        item['section'] = i[5]
+        item['time'] = i[4]
+        item['lastRe'] = 'to be added'
+        item['reNum'] = 0 if not i[7] else i[7]
+        tmp.append(item)
+    return tmp
+
+
+class FollowHandler(tornado.web.RequestHandler):
+    def get(self, fid):
+        uid = self.get_secure_cookie('user')
+        print 'uid type: ', type(uid)
+        print 'fid type: ', type(fid)
+        if fid == uid:
+            print 'equal'
+            self.write('F')
+        else:
+            self.follow(int(uid), int(fid))
+
+    def follow(self, uid, fid):
+        sqlStr = [
+            "insert into Make_Friends value",
+            "(%d, %d)"
+        ]
+        sqlStr = ''.join(sqlStr) % (uid, fid)
+        db = mysql_db.DB()
+        res = db.insert_data(sqlStr)
+        db.close_conn()
+        if res == 1:
+            self.write('T')
+        else:
+            self.write('F')
+
 class PostModule(tornado.web.UIModule):
     def render(self, post):
         return self.render_string('modules/post.html', post=post)
@@ -433,6 +550,9 @@ def main():
             (r'/topic', TopicHandler),
             (r'/config', ConfigHandler),
             (r'/db', DBHandler),
+            (r'/member/([a-z]+)/([0-9]+)', MemberHandler),
+            (r'/follow/([0-9]+)', FollowHandler),
+            (r'/friends', FriendsHandler),
             ], **settings)
     http_server = tornado.httpserver.HTTPServer(application)
     http_server.listen(options.port)

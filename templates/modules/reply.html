@@ -3,12 +3,14 @@
         <tbody>
             <tr>
                 <td valign="top" width="48" align="center">
-                    <img src="{{ static_url(reply["icon"]) }}" border="0" align="default" class="avatar" style="max-width: 48px; max-height: 48px;">
+                    <a href="/member/all/{{reply['id']}}">
+                        <img src="{{ static_url(reply["icon"]) }}" border="0" align="default" class="avatar" style="max-width: 48px; max-height: 48px;">
+                    </a>
                 </td>
                 <td valign="top" width="10"></td>
                 <td valign="top" width="auto" align="left">
                     <div class="sep3"></div>
-                    <strong><a class="dark" href="/">{{ reply["user"] }}</a></strong>
+                    <strong><a class="dark" href="/member/all/{{reply['id']}}">{{ reply["user"] }}</a></strong>
                     &nbsp; &nbsp;
                     <span class="hfade small">{{ reply["time"] }}</span>
                     <div class="sep5"></div>

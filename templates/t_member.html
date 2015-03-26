@@ -1,0 +1,185 @@
+{% extends "home.html" %}
+
+{% block top_3 %}
+    {% if cUser %}
+    <td width="570" align="right" style="padding-top: 2px;">
+        <a href="/home" class="top">Home</a>
+        &nbsp;&nbsp;&nbsp;
+        <a href="/config" class="top">{{cUser['account']}}</a>
+        &nbsp;&nbsp;&nbsp;
+        <a href="/config" class="top">Config</a>
+        &nbsp;&nbsp;&nbsp;
+        <a href="/signin?action=logout" class="top">Log Out</a>
+    </td>
+    {% else %}
+    <td width="570" align="right" style="padding-top: 2px;">
+        <a href="/home" class="top">Home</a>
+        &nbsp;&nbsp;&nbsp;
+        <a href="/signup" class="top">Sign Up</a>
+        &nbsp;&nbsp;&nbsp;
+        <a href="/signin" class="top">Sign In</a>
+    </td>
+    {% end %}
+{% end %}
+
+{% block wrapper_rightbar_box1 %}
+    {% if cUser %}
+    <div class="box">
+        <div class="cell">
+            <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tbody>
+                    <tr>
+                        <td width="48" valign="top">
+                            <a href="/member/all/{{cUser['id']}}">
+                                <img src="{{ static_url(cUser['icon']) }}" class="avator" border="0" align="default" style="max-width: 48px; max-height: 48px;">
+                            </a>
+                        </td>
+                        <td width="10" valign="top"></td>
+                        <td width="auto" align="left">
+                            <span class="bigger"><a href="/config">{{ cUser['account'] }}</a></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="sep10"></div>
+            <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tbody>
+                    <tr>
+                        <td width="33%" align="center">
+                            <a href="/member/post/{{cUser['id']}}" class="dark" style="display: block;">
+                                <span class="bigger">{{ cUser['pNum'] }}</span>
+                                <div class="sep3"></div>
+                                <span class="bigger">Post</span>
+                            </a>
+                        </td>
+                        <td width="34%" style="border-left: 1px solid rgba(100, 100, 100, 0.4); border-right: 1px solid rgba(100, 100, 100, 0.4);" align="center">
+                            <a href="/member/reply/{{cUser['id']}}">
+                                <span class="bigger">{{ cUser['rNum'] }}</span>
+                                <div class="sep3"></div>
+                                <span class="bigger">Reply</span>
+                            </a>
+                        </td>
+                        <td width="33%" align="center">
+                            <a href="/friends">
+                                <span class="bigger">{{ cUser['fNum'] }}</span>
+                                <div class="sep3"></div>
+                                <span class="bigger">Friends</span>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="cell" style="padding: 5px;">
+            <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tbody>
+                    <tr>
+                        <td width="32">
+                            <a href="/new"><img src="{{ static_url('pic/new.png') }}" alt="" width="32" border="0"></a>
+                        </td>
+                        <td width="10"></td>
+                        <td width="auto" valign="middle" align="left">
+                            <a href="/new">Submit a new post</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="cell">
+            <a href="/home">x unread message</a>
+        </div>
+        <div class="inner">
+            <div float="right" text-align="right"><a href="/home">balance: {{ cUser['balance'] }}</a></div>
+        </div>
+    </div>
+    {% else %}
+    <div class="box">
+        <div class="cell">
+            <strong>Ran - cpsc 304 project</strong>
+            <div class="sep5"></div>
+            <span class="hfade">This is a place to share and explore</span>
+        </div>
+        <div class="inner">
+            <div class="sep5"></div>
+            <div align="center">
+                <a href="/signup" class="super normal button">Sign Up Right Now</a>
+                <div class="sep5"></div>
+                <div class="sep10"></div>
+                Already have an account? please&nbsp;
+                <a href="/signin">Sign In</a>
+            </div>
+        </div>
+    </div>
+    {% end %}
+{% end %}
+
+{% block wrapper_main_box1 %}
+    <div class="box">
+        <div class="cell">
+            <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tbody>
+                    <tr>
+                        <td width="73" valign="top" align="center">
+                            <img class="avator" src="{{ static_url(user["icon"]) }}" alt="" border="0" align="default" style="max-width: 73px; max-height: 73px;">
+                            <div class="sep10"></div>
+                        </td>
+                        <td width="10"></td>
+                        <td width="auto" valign="top" align="left">
+                            {% if cUser['id'] != user['id'] %}
+                                <div class="fr"><button id="fBtn" class="btn btn-success">Follow</button></div>
+                            {% end %}
+                            <h1 valign="top" style="margin-bottom: 5px; margin-top: 0px;" >{{user["account"]}}</h1>
+                            <div class="sep10"></div>
+                            <span class="gray">The No.{{user["id"]}} member in this forum.</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="inner"></div>
+    </div>
+    <div class="sep20"></div>
+    <div class="box">
+        {% if posts %}
+            <div class="cell"><span class="gray">The post {{user["account"]}} created recently</span></div>
+            {% for post in posts %}
+                {% module Post(post) %}
+            {% end %}
+        {% end %}
+    </div>
+    <div class="sep20"></div>
+    <div class="box">
+        {% if replys %}
+            <div class="cell"><span class="gray">{{user["account"]}} latest reply</span></div>
+            {% for reply in replys %}
+                {% module Reply(reply) %}
+            {% end %}
+        {% end %}
+    </div>
+    <div class="sep20"></div>
+{% end %}
+{% if cUser['id'] != user['id'] %}
+    {% block script %}
+    <script>
+    $(function() {
+            follow();
+            });
+    function follow(){
+        $("#fBtn").click(function(){
+                var url="/follow/{{user["id"]}}";
+                $.get(url, function(res){
+                    if(res=="T"){
+                    $("#fBtn").html('Success')
+                    }
+                    else{
+                    $("#fBtn").html('Failed')
+                    }
+                    })
+                })
+    }
+    </script>
+    <script>
+    $('#fBtn').validator()
+    </script>
+    {% end %}
+{% end %}

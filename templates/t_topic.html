@@ -3,7 +3,7 @@
 {% block wrapper_main_box1 %}
     <div class="box" style="border-bottom: 0px;">
         <div class="header">
-            <div class="fr"><a href="/"><img class="avatar" src="{{ static_url(post["icon"]) }}" alt="" border="0" align="default" style="max-width: 96px; max-height: 96px;"></a></div>
+            <div class="fr"><a href="/member/all/{{post['id']}}"><img class="avatar" src="{{ static_url(post["icon"]) }}" alt="" border="0" align="default" style="max-width: 96px; max-height: 96px;"></a></div>
             <a href="/">{{ post["account"] }}</a>
             <span class="chevron">&nbsp;›&nbsp;</span>
             <a href="/">{{ post["section"]}}</a>
