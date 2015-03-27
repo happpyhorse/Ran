@@ -4,6 +4,7 @@
 import os
 import time
 import random
+import json
 
 import tornado.httpserver
 import tornado.httpclient
@@ -40,6 +41,7 @@ class MainHandler(tornado.web.RequestHandler):
 def get_wealth_list():
     db = mysql_db.DB()
     res = db.query_data('select u_name, points from User a order by points desc limit 5')
+    db.close_conn()
     return res
 
 
@@ -51,7 +53,6 @@ def get_all_posts():
         db = mysql_db.DB()
         ret = db.query_data('select a.u_name, a.icon, b.pid, b.p_content, b.p_date, c.s_name, d.t_title, e.num, a.uid  from User a, Section c, P_Topic d, Post_Include_P_Edit b left join (select t_pid, count(*) as num from P_Reply group by t_pid) e on b.pid=e.t_pid where a.uid = b.uid and b.sid = c.sid and b.type = 1 and d.t_pid = b.pid and c.s_name = "%s"' % section)
         db.close_conn()
-        print ret
         for i in ret:
             item = {}
             item['pid'] = i[2]
@@ -66,15 +67,12 @@ def get_all_posts():
             item['reNum'] = 0 if not i[7] else i[7]
             tmp.append(item)
         res[section] = tmp
-    print res
     return res
 
 def get_post_topic(pid):
     db = mysql_db.DB()
-    print 'pid: ', pid
     ret = db.query_data('select a.u_name, a.icon, b.pid, b.p_content, b.p_date, c.s_name, d.t_title, a.uid  from User a, Section c, P_Topic d, Post_Include_P_Edit b where a.uid = b.uid and b.sid = c.sid and b.type = 1 and d.t_pid = b.pid and b.pid = %d' % int(pid))
     ret = ret[0]
-    print 'ret: ', ret
     db.close_conn()
     res = {}
     res['pid'] = ret[2]
@@ -92,7 +90,6 @@ def get_replys(pid):
     db = mysql_db.DB()
     ret = db.query_data('select * from User a, Post_Include_P_Edit b, P_Reply c where a.uid = b.uid and b.type = 2 and b.pid = c.pid and c.t_pid = %d' % int(pid))
     db.close_conn()
-    print ret
     for i in ret:
         item = {}
         item['id'] = i[0]
@@ -101,7 +98,6 @@ def get_replys(pid):
         item['time'] = i[14]
         item['content'] = i[13]
         res.append(item)
-    print res
     return res
 
 def get_forum():
@@ -113,7 +109,11 @@ def get_forum():
     res['aTNum'] = ret[0][0]
     ret = db.query_data('select count(*) from Post_Include_P_Edit where type = 2')
     res['aRNum'] = ret[0][0]
-    print 'res: ', res
+    ret = db.query_data('SELECT count(*) as cnt, DATE_FORMAT(P_Date, "%Y%m%d") days FROM forum.Post_Include_P_Edit group by days order by cnt desc')
+    res['postMax'] = ret[0][0]
+    res['postMin'] = ret[-1][0]
+    ret = db.query_data('select avg(cnt) from (SELECT count(*) as cnt, DATE_FORMAT(P_Date, "%Y%m%d") days FROM forum.Post_Include_P_Edit group by days) a')
+    res['postAvg'] = '%.1f' % ret[0][0]
     db.close_conn()
     return res
 
@@ -138,7 +138,6 @@ def get_user(uid):
     res['fNum'] = ret[0][0]
     res['id'] = uid
     db.close_conn()
-    print 'res: ', res
     return res
 
 class NewHandler(tornado.web.RequestHandler):
@@ -162,14 +161,15 @@ class NewHandler(tornado.web.RequestHandler):
         title = self.get_argument('title')
         content = self.get_argument('content')
         sectionName = self.get_argument('sectionName')
-        print content
+        att = self.request.files.get('att')
         db = mysql_db.DB()
         res = db.query_data('select t_pid from P_Topic order by t_pid desc limit 1')
         if res:
             tPid = res[0][0] + 1
         else:
             tPid = 1
-        res = db.query_data('select sid from Section where s_name = "%s"' % sectionName)
+        res = db.query_data('select sid from Section where s_name = "%s"'\
+                % sectionName)
         if res:
             sid = res[0][0]
         sqlStr = [
@@ -184,6 +184,22 @@ class NewHandler(tornado.web.RequestHandler):
         ]
         sqlStr = ''.join(sqlStr) % (tPid, content, timeStamp, uid, sid)
         res = db.insert_data(sqlStr)
+        if att:
+            att = att[0]
+            res = db.query_data('select Aid from Attachment \
+                    order by Aid desc limit 1')
+            if res:
+                aid = res[0][0] + 1
+            else:
+                aid = 1
+            path = './static/att/%s.%s.rar' % (str(aid), att['filename'].split('.')[-1])
+            f = open(path, 'wb')
+            f.write(att['body'])
+            f.close()
+            path = path.split('/', 2)[-1]
+            sqlStr = 'insert into Attachment value (%d, "%s", 0, 0, 0, %d)' %\
+                     (aid, path, tPid)
+            res = db.insert_data(sqlStr)
         db.close_conn()
         if res == 1:
             self.redirect('/home')
@@ -216,14 +232,11 @@ class SignUpHandler(tornado.web.RequestHandler):
         self.render('t_signup.html', title='Ran - Sign Up', sections=sections)
 
     def post(self):
-        print 'hi'
         email =  self.get_argument('email')
         account =  self.get_argument('account')
         pwd =  self.get_argument('pwd1')
-        print email, account, pwd, name
         db = mysql_db.DB()
         res = db.query_data('select Uid from User order by uid desc limit 1')
-        print res
         if res:
             uid = res[0][0] + 1
         else:
@@ -233,15 +246,24 @@ class SignUpHandler(tornado.web.RequestHandler):
             "(%d, 0, '%s', '%s', 'pic/default.png', '%s', '', '', 10, 1)"
         ]
         sqlStr = ''.join(sqlStr) % (uid, pwd, email, account)
-        print sqlStr
         res = db.insert_data(sqlStr)
         db.close_conn()
-        print 'res: ', res
         if res == 1:
             self.set_secure_cookie('user', str(uid))
             self.redirect('/home')
         else:
             self.redirect('/signup')
+
+def get_att(pid):
+    res = {}
+    db = mysql_db.DB()
+    ret = db.query_data('select A_Name from Attachment where T_Pid = %d' % int(pid))
+    if ret:
+        res['name'] = ret[0][0].split('/')[-1]
+        res['url'] = ret[0][0]
+    db.close_conn()
+    return res
+
 
 
 class TopicHandler(tornado.web.RequestHandler):
@@ -251,13 +273,13 @@ class TopicHandler(tornado.web.RequestHandler):
         user = get_user(uid)
         replys = get_replys(pid)
         post = get_post_topic(pid)
+        att = get_att(pid)
         forum = get_forum()
         wealthList = get_wealth_list()
-        print post
         self.render(
                 't_topic.html', title='Ran - Topic',
                 user=user, forum=forum, replys=replys,
-                post=post, wealthList=wealthList,
+                post=post, wealthList=wealthList, att=att,
                 )
 
     def post(self):
@@ -266,7 +288,6 @@ class TopicHandler(tornado.web.RequestHandler):
         content = self.get_argument('content')
         sectionName = self.get_argument('section')
         tPid = self.get_argument('tPid')
-        print content
         db = mysql_db.DB()
         res = db.query_data('select sid from Section where s_name = "%s"' % sectionName)
         if res:
@@ -322,7 +343,8 @@ class ConfigHandler(tornado.web.RequestHandler):
             sqlStr = 'update User set u_address = "%s", u_name = "%s" where uid = %d' % (address, account, uid)
             res = db.update_data(sqlStr)
         elif action == 'icon':
-            icon = self.request.files.get('icon')[0]
+            icon = self.request.files.get('icon')
+            icon = icon[0]
             path = './static/pic/%s.png' % str(uid)
             f = open(path, 'wb')
             f.write(icon['body'])
@@ -331,7 +353,6 @@ class ConfigHandler(tornado.web.RequestHandler):
             sqlStr = 'update User set icon = "%s" where uid = %d' % (path, uid)
             res = db.update_data(sqlStr)
         elif action == 'pwd':
-            print 'in pwd'
             newPwd = self.get_argument('new')
             sqlStr = 'update User set password = "%s" where uid = %d' % (newPwd, uid)
             res = db.update_data(sqlStr)
@@ -352,7 +373,6 @@ class DBHandler(tornado.web.RequestHandler):
             self.pwd_check(param)
 
     def post(self):
-        print '1'
         mail = self.get_argument('mail')
         pwd = self.get_argument('pwd')
         self.signin_check(mail, pwd)
@@ -435,7 +455,6 @@ def get_reply_by_id(uid):
     db = mysql_db.DB()
     ret = db.query_data('select * from User a, Post_Include_P_Edit b, P_Reply c where a.uid = b.uid and b.type = 2 and b.pid = c.pid and a.uid = %d' % int(uid))
     db.close_conn()
-    print ret
     for i in ret:
         item = {}
         item['id'] = i[0]
@@ -444,7 +463,6 @@ def get_reply_by_id(uid):
         item['time'] = i[14]
         item['content'] = i[13]
         res.append(item)
-    print res
     return res
 
 class FriendsHandler(tornado.web.RequestHandler):
@@ -482,10 +500,7 @@ def get_friends_post(uid):
 class FollowHandler(tornado.web.RequestHandler):
     def get(self, fid):
         uid = self.get_secure_cookie('user')
-        print 'uid type: ', type(uid)
-        print 'fid type: ', type(fid)
         if fid == uid:
-            print 'equal'
             self.write('F')
         else:
             self.follow(int(uid), int(fid))
@@ -497,6 +512,42 @@ class FollowHandler(tornado.web.RequestHandler):
         ]
         sqlStr = ''.join(sqlStr) % (uid, fid)
         db = mysql_db.DB()
+        res = db.insert_data(sqlStr)
+        db.close_conn()
+        if res == 1:
+            self.write('T')
+        else:
+            self.write('F')
+
+class DraftHandler(tornado.web.RequestHandler):
+    def get(self):
+        uid = int(self.get_secure_cookie('user'))
+        db = mysql_db.DB()
+        ret = db.query_data('select D_Title, D_Content from Draft where Uid = %d order by Did desc limit 1' % uid)
+        db.close_conn()
+        res = {}
+        res['title'] = ret[0][0]
+        res['content'] = ret[0][1]
+        res = json.dumps(res)
+        self.write(res)
+
+    def post(self):
+        title = self.get_argument('title')
+        content = self.get_argument('content')
+        uid = int(self.get_secure_cookie('user'))
+
+        db = mysql_db.DB()
+        res = db.query_data('select Did from Draft order by Did desc limit 1')
+        if res:
+            did = res[0][0] + 1
+        else:
+            did = 1
+
+        sqlStr = [
+            "insert into Draft value",
+            "(%d, '%s', '%s', %d)"
+        ]
+        sqlStr = ''.join(sqlStr) % (did, title, content, uid)
         res = db.insert_data(sqlStr)
         db.close_conn()
         if res == 1:
@@ -553,6 +604,7 @@ def main():
             (r'/member/([a-z]+)/([0-9]+)', MemberHandler),
             (r'/follow/([0-9]+)', FollowHandler),
             (r'/friends', FriendsHandler),
+            (r'/draft', DraftHandler),
             ], **settings)
     http_server = tornado.httpserver.HTTPServer(application)
     http_server.listen(options.port)

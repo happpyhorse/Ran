@@ -7,20 +7,27 @@
             <span class="chevron">&nbsp;›&nbsp;</span>
             " New Topic"
         </div>
-        <form id="compose" action="/new" method="post">
+        <form id="compose" action="/new" method="post" enctype="multipart/form-data">
             <div class="cell">
                 <div id="title_remaining" class="fr hfade">120</div>
                 Topic Title
             </div>
             <div class="cell" style="padding: 0px; background-color: #fff;">
-                <input class="form-control" name="title" type="text" autofocus="autofocus" placeholder="Please enter the topic title. If it could express fully, the main content could be empty" required>
+                <input id="formTitle" class="form-control" name="title" type="text" autofocus="autofocus" placeholder="Please enter the topic title. If it could express fully, the main content could be empty" required>
             </div>
             <div class="cell">
                 <div id="content_remaining" class="fr hfade">20000</div>
                 Main Content
             </div>
             <div class="cell">
-                <textarea class="form-control" name="content" cols="30" rows="20" required></textarea>
+                <textarea id="formContent" class="form-control" name="content" cols="30" rows="20" required></textarea>
+            </div>
+            <div class="cell">
+                <div class="fr hfade">One file Only</div>
+                Attachment(optional)
+            </div>
+            <div class="cell">
+                <input name="att" type="file">
             </div>
             <div class="cell">
                 <select id="nodes" name="sectionName" style="width:300; font-size: 14px;" data-placeholder="Select a node">
@@ -39,7 +46,9 @@
                 <div class="fr">
                     <button type="submit" class="super normal button">Create</button>
                 </div>
-                <button class="super normal button">Preview</button>
+                <button type="button" id="saveDraft" class="super normal button">Save Draft</button>
+                <button type="button" id="loadDraft" class="super normal button">Load Draft</button>
+                <span id="resInfo" class="label label-info"></span>
             </div>
         </form>
     </div>
@@ -48,3 +57,46 @@
 {% block wrapper_main_box2 %}{% end %}
 
 {% block wrapper_main_box3 %}{% end %}
+{% block script %}
+<script>
+$(function() {
+        saveDraft();
+        loadDraft();
+        });
+function saveDraft(){
+    $("#saveDraft").click(function(){
+            var title=$("#formTitle").val();
+            var content=$("#formContent").val();
+            var url="/draft";
+            var data={'title': title, 'content': content}
+            $.post(url, data, function(res){
+                if(res=="T"){
+                $("#resInfo").html("save draft success")
+                }
+                else{
+                $("#resInfo").html("save draft failed")
+                }
+            })
+    })
+}
+function loadDraft(){
+    $("#loadDraft").click(function(){
+            var url="/draft";
+            $.getJSON(url, function(res){
+                if(res){
+                $("#formTitle").val(res['title'])
+                $("#formContent").html(res['content'])
+                $("#resInfo").html("load draft success")
+                }
+                else{
+                $("#resInfo").html("load draft failed")
+                }
+            })
+    })
+}
+</script>
+<script>
+$('#saveDraft').validator()
+$('#loadDraft').validator()
+</script>
+{% end %}
