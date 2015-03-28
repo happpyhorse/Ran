@@ -499,7 +499,7 @@ class DBHandler(tornado.web.RequestHandler):
                 self.write('T')
             else:
                 db.close_conn()
-                self.wirte('F')
+                self.write('F')
 
 
     def pwd_check(self, param):
