@@ -178,7 +178,8 @@ def get_forum():
     ret = db.query_data('select avg(cnt) from (SELECT count(*) as cnt, DATE_FORMAT(P_Date, "%Y%m%d") days FROM forum.Post_Include_P_Edit group by days) a')
     res['postAvg'] = '%.1f' % ret[0][0]
     ret = db.query_data('SELECT U_name FROM User U WHERE NOT EXISTS ( SELECT * FROM Section S WHERE NOT EXISTS (SELECT * FROM Post_Include_P_Edit P WHERE P.UID=U.UID and P.SID=S.SID))')
-    res['activeMember'] = ret[0][0]
+    if ret[0]:
+        res['activeMember'] = ret[0][0]
     db.close_conn()
     return res
 
