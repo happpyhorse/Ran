@@ -172,10 +172,10 @@ def get_forum():
     res['aTNum'] = ret[0][0]
     ret = db.query_data('select count(*) from Post_Include_P_Edit where type = 2')
     res['aRNum'] = ret[0][0]
-    ret = db.query_data('SELECT count(*) as cnt, DATE_FORMAT(P_Date, "%Y%m%d") days FROM forum.Post_Include_P_Edit group by days order by cnt desc')
+    ret = db.query_data('SELECT count(*) as cnt, DATE_FORMAT(P_Date, "%Y%m%d") days FROM forum.Post_Include_P_Edit where type = 1 group by days order by cnt desc')
     res['postMax'] = ret[0][0]
     res['postMin'] = ret[-1][0]
-    ret = db.query_data('select avg(cnt) from (SELECT count(*) as cnt, DATE_FORMAT(P_Date, "%Y%m%d") days FROM forum.Post_Include_P_Edit group by days) a')
+    ret = db.query_data('select avg(cnt) from (SELECT count(*) as cnt, DATE_FORMAT(P_Date, "%Y%m%d") days FROM forum.Post_Include_P_Edit where type = 1 group by days) a')
     res['postAvg'] = '%.1f' % ret[0][0]
     ret = db.query_data('SELECT U_name FROM User U WHERE NOT EXISTS ( SELECT * FROM Section S WHERE NOT EXISTS (SELECT * FROM Post_Include_P_Edit P WHERE P.UID=U.UID and P.SID=S.SID))')
     if ret:
