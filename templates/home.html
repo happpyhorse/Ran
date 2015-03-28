@@ -31,10 +31,12 @@
                             </a>
                             </td>
                             <td width="auto" align="left">
-                                <div class="input-group">
-                                    <span class="input-group-btn"><button class="btn btn-default" type="submit">Go</button></span>
-                                    <input class="form-control" type="text" placeholder="Search for">
-                                </div>
+                                <form action="/search" method="get">
+                                    <div class="input-group">
+                                        <span class="input-group-btn"><button class="btn btn-default" type="submit">Go</button></span>
+                                        <input id="searchInput" class="form-control" type="text" name="searchInput" placeholder="Search for">
+                                    </div>
+                                </form>
                             </td>
                             {% block top_3 %}{% end %}
                         </tr>

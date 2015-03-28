@@ -1,0 +1,173 @@
+{% extends "home.html" %}
+
+{% block top_3 %}
+    {% if cUser %}
+    <td width="570" align="right" style="padding-top: 2px;">
+        <a href="/home" class="top">Home</a>
+        &nbsp;&nbsp;&nbsp;
+        <a href="/config" class="top">{{cUser['account']}}</a>
+        &nbsp;&nbsp;&nbsp;
+        <a href="/config" class="top">Config</a>
+        &nbsp;&nbsp;&nbsp;
+        <a href="/signin?action=logout" class="top">Log Out</a>
+    </td>
+    {% else %}
+    <td width="570" align="right" style="padding-top: 2px;">
+        <a href="/home" class="top">Home</a>
+        &nbsp;&nbsp;&nbsp;
+        <a href="/signup" class="top">Sign Up</a>
+        &nbsp;&nbsp;&nbsp;
+        <a href="/signin" class="top">Sign In</a>
+    </td>
+    {% end %}
+{% end %}
+
+{% block wrapper_rightbar_box2 %}
+    <div class="box">
+        <div class="cell">
+            <span>Community Statue</span>
+        </div>
+        <div class="cell">
+            <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tbody>
+                    <tr>
+                        <td width="160" align="right">
+                            <span class="gray">Regist Member</span>
+                            <td width="10"></td>
+                            <td width="auto" align="left"><strong>{{ forum['rMNum'] }}</strong></td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="160" align="right">
+                            <span class="gray">Topic</span>
+                            <td width="10"></td>
+                            <td width="auto" align="left"><strong>{{ forum['aTNum'] }}</strong></td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="160" align="right">
+                            <span class="gray">Reply</span>
+                            <td width="10"></td>
+                            <td width="auto" align="left"><strong>{{ forum['aRNum'] }}</strong></td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="160" align="right">
+                            <span class="gray">Max Posts/Day</span>
+                            <td width="10"></td>
+                            <td width="auto" align="left"><strong>{{ forum['postMax'] }}</strong></td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="160" align="right">
+                            <span class="gray">Min Posts/Day</span>
+                            <td width="10"></td>
+                            <td width="auto" align="left"><strong>{{ forum['postMin'] }}</strong></td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="160" align="right">
+                            <span class="gray">Average Posts/Day</span>
+                            <td width="10"></td>
+                            <td width="auto" align="left"><strong>{{ forum['postAvg'] }}</strong></td>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="cell">
+            <span>Wealth Ranking List</span>
+        </div>
+        <div class="inner">
+            <table class="table table-condensed table-hover">
+                <tr class="info">
+                    <td>Rank</td>
+                    <td>Account</td>
+                    <td>Points</td>
+                </tr>
+                {% for index in range(0,len(wealthList))%}
+                <tr>
+                    <td>{{index + 1}}</td>
+                    <td>{{wealthList[index][0]}}</td>
+                    <td>{{wealthList[index][1]}}</td>
+                </tr>
+                {% end %}
+            </table>
+        </div>
+    </div>
+{% end %}
+
+{% block wrapper_main_box1 %}
+    <div class="box">
+        {% if allUsers %}
+            {% for user in allUsers %}
+                <div class="cell" id="userDiv{{user['id']}}">
+                    <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                        <tbody>
+                            <tr>
+                                <td width="73" valign="top" align="center">
+                                    <img class="avator" src="{{ static_url(user["icon"]) }}" alt="" border="0" align="default" style="max-width: 30px; max-height: 30px;">
+                                </td>
+                                <td width="30"></td>
+                                <td width="30" valign="top" align="right">
+                                    <h5 valign="top">{{user["account"]}}</h5>
+                                </td>
+                                <td width="30"></td>
+                                <td width="30" valign="top" align="left">
+                                    <h5 valign="top">{{user["mail"]}}</h5>
+                                </td>
+                                <td width="auto" valign="top" align="right">
+                                    <button class="btn btn-xs btn-danger" id="userDelBtn{{user['id']}}" type="button">delete</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            {% end %}
+        {% end %}
+        <div class="inner"></div>
+    </div>
+    <div class="sep20"></div>
+    <div class="box">
+        {% if allPosts %}
+            <div class="cell"><span class="gray">all posts</span></div>
+            {% for post in allPosts %}
+                {% module Post(post) %}
+            {% end %}
+        {% end %}
+    </div>
+    <div class="sep20"></div>
+    <div class="box">
+        {% if allReplys %}
+            <div class="cell"><span class="gray">all replys</span></div>
+            {% for reply in allReplys %}
+                {% module Reply(reply) %}
+            {% end %}
+        {% end %}
+    </div>
+    <div class="sep20"></div>
+{% end %}
+
+{% block script %}
+    {% for user in allUsers %}
+        <script>
+        $(function() {
+                delUser{{user['id']}}();
+                });
+        function delUser{{user['id']}}(){
+            $("#userDelBtn{{user['id']}}").click(function(){
+                    alert("in jquery");
+                    var url="/db?action=del_user&uid={{user['id']}}";
+                    $.get(url, function(res){
+                        if(res=="T"){
+                        $("#userDiv{{user['id']}}").hide(1000);
+                        }
+                    })
+            })
+        }
+        </script>
+        <script>
+        $('#userDelBtn{{user['id']}}').validator()
+        </script>
+    {% end %}
+{% end %}

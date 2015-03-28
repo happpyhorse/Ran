@@ -40,6 +40,11 @@ class DB:
         self.conn.commit()
         return res
 
+    def del_data(self, sqlStr):
+        res = self.execute_sql(sqlStr)
+        self.conn.commit()
+        return res
+
 
     def create_table(self):
         sqlStr = [

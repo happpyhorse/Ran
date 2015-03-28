@@ -163,6 +163,15 @@
                             <td width="auto" align="left"><strong>{{ forum['postAvg'] }}</strong></td>
                         </td>
                     </tr>
+                    {% if forum['activeMember'] %}
+                    <tr>
+                        <td width="160" align="right">
+                            <span class="gray">Active Member</span>
+                            <td width="10"></td>
+                            <td width="auto" align="left"><strong>{{ forum['activeMember'] }}</strong></td>
+                        </td>
+                    </tr>
+                    {% end %}
                 </tbody>
             </table>
         </div>

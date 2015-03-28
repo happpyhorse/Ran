@@ -18,7 +18,11 @@
         </div>
         {% if att %}
         <div class="cell">
-            <div class="topic_attachment">
+            <div>
+                <button id="buyBtn" class="btn btn-info" type="button">Buy attachment for {{att['cost'] }} points</button>
+            </div>
+            <div class="sep10"></div>
+            <div id="attDiv" class="topic_attachment" style="display:none;">
                 <span class="grey">click to download: </span>
                 <a href="{{ static_url(att['url'])}}">{{att['name']}}</a>
             </div>
@@ -61,6 +65,28 @@
         </div>
         <div class="inner"></div>
     </div>
-    {% else %}
+    {% end %}
+{% end %}
+{% block script %}
+    {% if user and att %}
+    <script>
+    $(function() {
+            buyAttachment();
+            });
+    function buyAttachment() {
+        $("#buyBtn").click(function() {
+                var url="/db?action=buy_att&buid={{user['id']}}&cost={{att['cost']}}&suid={{post['id']}}";
+                $.get(url, function(res){
+                    if(res=="T"){
+                    $("#attDiv").show(1000);
+                    $("#buyBtn").hide(1000);
+                    }
+                    else{
+                    $("#buyBtn").html("Buy failed")
+                    }
+                })
+            })
+    }
+    </script>
     {% end %}
 {% end %}

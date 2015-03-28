@@ -30,6 +30,9 @@
                 <input name="att" type="file">
             </div>
             <div class="cell">
+                <input class="form-control" type="text" name="cost" placeholder="The cost of the attachment">
+            </div>
+            <div class="cell">
                 <select id="nodes" name="sectionName" style="width:300; font-size: 14px;" data-placeholder="Select a node">
                     {% for section in sections %}
                     <option value="{{section}}">{{section}}</option>
