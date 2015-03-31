@@ -16,7 +16,7 @@ tableList = ['Admin', 'User', 'Section', 'Post_Include_P_Edit', 'P_Topic', 'P_Re
 #create
 createList = [
     'CREATE TABLE Admin(AdminID INTEGER,Password VARCHAR(64),Email VARCHAR(64),Icon VARCHAR(64),Admin_Name VARCHAR(64),PRIMARY KEY (AdminID));\n',
-    'CREATE TABLE User(UID INTEGER,U_AccessLevel INTEGER,Password VARCHAR(64),Email VARCHAR(64),Icon VARCHAR(64),U_Name VARCHAR(64),U_Address VARCHAR(64),PostalCode VARCHAR(32),Points INTEGER,AdminID INTEGER,PRIMARY KEY (UID),FOREIGN KEY (AdminID) REFERENCES Admin(AdminID));\n',
+    'CREATE TABLE User(UID INTEGER,U_AccessLevel INTEGER,Password VARCHAR(64),Email VARCHAR(64),Icon VARCHAR(64),U_Name VARCHAR(64),U_Address VARCHAR(64),PostalCode VARCHAR(32),Points INTEGER CHECK (Points > 0),AdminID INTEGER,PRIMARY KEY (UID),FOREIGN KEY (AdminID) REFERENCES Admin(AdminID));\n',
     'CREATE TABLE Section(SID INTEGER,S_Name VARCHAR(64),AdminID INTEGER,PRIMARY KEY (SID),FOREIGN KEY (AdminID) REFERENCES Admin(AdminID));\n',
     'CREATE TABLE Post_Include_P_Edit(PID INTEGER,Type INTEGER,Like_Amount INTEGER,P_Content VARCHAR(512),P_Date TIMESTAMP,UID INTEGER,AdminID INTEGER,SID INTEGER,PRIMARY KEY (PID),FOREIGN KEY (UID) REFERENCES User(UID),FOREIGN KEY (AdminID) REFERENCES Admin(AdminID),FOREIGN KEY (SID) REFERENCES Section(SID) ON DELETE CASCADE ON UPDATE CASCADE);\n',
     'CREATE TABLE P_Topic(T_PID INTEGER,T_Title VARCHAR(64),View_Amount INTEGER,PRIMARY KEY (T_PID));\n',
@@ -90,6 +90,7 @@ def init():
         for item in createList:
             f.write(item)
         f.write('\n')
+        '''
         #insert admin
         for admin in initAdmin:
             f.write(template_admin % (admin[0], admin[1], admin[2], admin[3], admin[4]))
@@ -127,6 +128,7 @@ def init():
             f.write(template_title % (rId, title, viewAmount))
             f.write(template_content % (rId, replyType, likeAmount, content, timeStamp, random.choice(uIds), adminId, random.choice(sIds)))
             f.write(template_reply % (rId, random.choice(pIds)))
+        '''
 
 def main():
     init()
