@@ -90,7 +90,6 @@ def init():
         for item in createList:
             f.write(item)
         f.write('\n')
-        '''
         #insert admin
         for admin in initAdmin:
             f.write(template_admin % (admin[0], admin[1], admin[2], admin[3], admin[4]))
@@ -116,7 +115,8 @@ def init():
         for pId in pIds:
             title = random.choice(man) + ' ' + random.choice(verb) + ' ' + random.choice(nerb)
             content = random.choice(man) + ' ' + random.choice(verb) + ' ' + random.choice(nerb)
-            timeStamp = time.strftime('%Y%m%d%H%m%S', time.localtime())
+            stamp = random.randint(10, 20)
+            timeStamp = time.strftime('%Y%m%d%H%m%S', time.localtime(time.time() - stamp*100000))
             f.write(template_title % (pId, title, viewAmount))
             f.write(template_content % (pId, postType, likeAmount, content, timeStamp, random.choice(uIds), adminId, random.choice(sIds)))
         f.write('\n')
@@ -124,11 +124,11 @@ def init():
         for rId in rIds:
             title = random.choice(man) + ' ' + random.choice(verb) + ' ' + random.choice(nerb)
             content = random.choice(man) + ' ' + random.choice(verb) + ' ' + random.choice(nerb)
-            timeStamp = time.strftime('%Y%m%d%H%m%S', time.localtime())
+            stamp = random.randint(0, 10)
+            timeStamp = time.strftime('%Y%m%d%H%m%S', time.localtime(time.time() - stamp*100000))
             f.write(template_title % (rId, title, viewAmount))
             f.write(template_content % (rId, replyType, likeAmount, content, timeStamp, random.choice(uIds), adminId, random.choice(sIds)))
             f.write(template_reply % (rId, random.choice(pIds)))
-        '''
 
 def main():
     init()
