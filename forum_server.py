@@ -159,14 +159,14 @@ class ConfigHandler(tornado.web.RequestHandler):
         if action == 'info':
             address = self.get_argument('address')
             account = self.get_argument('account')
-            res = update_info(address, account, uid)
+            res = db.update_info(address, account, uid)
         elif action == 'icon':
             icon = self.request.files.get('icon')
             icon = icon[0]
-            res = update_icon(uid, icon)
+            res = db.update_icon(uid, icon)
         elif action == 'pwd':
             newPwd = self.get_argument('new')
-            res = update_icon(newPwd, uid)
+            res = db.update_pwd(newPwd, uid)
         if res == 1:
             warning = 'updata success'
         else:
